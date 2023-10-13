@@ -25,10 +25,12 @@ func _ready():
 	match placeholder_fruit.fruit_type:
 		placeholder_fruit.FruitType.PEACH:
 			current_fruit.set_texture(fruit_tex_peach)
+#			current_fruit.scale = Vector2(0.1, 0.1)
 		placeholder_fruit.FruitType.APPLE:
 			current_fruit.set_texture(fruit_tex_apple)
-		placeholder_fruit.FruitType.MELON:
-			current_fruit.set_texture(fruit_tex_melon)
+#			current_fruit.scale = Vector2(0.15, 0.15)
+#		placeholder_fruit.FruitType.MELON:
+#			current_fruit.set_texture(fruit_tex_melon)
 	placeholder_fruit.collided_once = true
 	last_fruit = placeholder_fruit
 
@@ -54,10 +56,13 @@ func drop_fruit():
 	match placeholder_fruit.fruit_type:
 		placeholder_fruit.FruitType.PEACH:
 			current_fruit.set_texture(fruit_tex_peach)
+#			current_fruit.scale = Vector2(0.1, 0.1)
 		placeholder_fruit.FruitType.APPLE:
 			current_fruit.set_texture(fruit_tex_apple)
-		placeholder_fruit.FruitType.MELON:
-			current_fruit.set_texture(fruit_tex_melon)
+#			current_fruit.scale = Vector2(0.15, 0.15)
+#		placeholder_fruit.FruitType.MELON:
+#			current_fruit.set_texture(fruit_tex_melon)
+#			current_fruit.scale = Vector2(0.2, 0.2)
 
 
 func gen_new_fruit(fruit_type):
@@ -66,10 +71,13 @@ func gen_new_fruit(fruit_type):
 	match fruit.fruit_type:
 		fruit.FruitType.PEACH:
 			fruit.get_child(0).set_texture(fruit_tex_peach)
+#			fruit.scale = Vector2(0.1, 0.1)
 		fruit.FruitType.APPLE:
 			fruit.get_child(0).set_texture(fruit_tex_apple)
+#			fruit.scale = Vector2(1.5, 1.5)
 		fruit.FruitType.MELON:
 			fruit.get_child(0).set_texture(fruit_tex_melon)
+#			fruit.scale = Vector2(2, 2)
 	add_child(fruit)
 	fruit.global_transform.origin = Vector2(player.position.x, player.position.y + 25)
 	fruits.append(fruit)
@@ -82,9 +90,11 @@ func gen_bigger_fruit_than(fruit_1, fruit_2):
 		new_fruit.FruitType.PEACH:
 			new_fruit.fruit_type = new_fruit.FruitType.APPLE
 			new_fruit.get_child(0).set_texture(fruit_tex_apple)
+#			new_fruit.scale = Vector2(1.5, 1.5)
 		new_fruit.FruitType.APPLE:
 			new_fruit.fruit_type = new_fruit.FruitType.MELON
 			new_fruit.get_child(0).set_texture(fruit_tex_melon)
+#			new_fruit.scale = Vector2(2, 2)
 	new_fruit.global_transform.origin = fruit_1.position.lerp(fruit_2.position, 0.5)
 	fruits.append(new_fruit)
 	last_fruit = placeholder_fruit
