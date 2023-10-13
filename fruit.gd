@@ -12,7 +12,7 @@ var collided := false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	body_shape_entered.connect(get_parent().gen_fruit)
+	pass
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -20,7 +20,7 @@ func _process(_delta):
 	pass
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	pass
 	# Add the gravity.
 	#if not is_on_floor():
@@ -31,6 +31,8 @@ func _physics_process(delta):
 	#	velocity.y = FALL_VELOCITY
 
 
-func _on_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
-	print(collided)
-	collided = true
+func _on_body_entered(body):
+	print(body)
+	if not collided and body:
+		collided = true
+		get_parent().last_fruit_collided()

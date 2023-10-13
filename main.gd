@@ -25,7 +25,7 @@ func _on_play_pressed():
 
 
 func _on_quit_pressed():
-	unload_level()
+	#unload_level()
 	get_tree().quit()
 
 
