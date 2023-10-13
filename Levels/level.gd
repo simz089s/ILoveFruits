@@ -13,6 +13,8 @@ var fruits: Array
 func _ready():
 	player = self.get_node("Player")
 	current_fruit = self.get_node("Fruit")
+	last_fruit = fruit_scene.instantiate() # Since first fruit is not generated yet... This orphan fruit will stay here forever though...
+	last_fruit.collided = true
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -25,9 +27,9 @@ func _physics_process(_delta):
 
 
 func _input(event):
-	if event.is_action_released("release_fruit") and current_fruit.visible:
-		drop_fruit()
+	if event.is_action_released("release_fruit") and last_fruit.collided:
 		current_fruit.hide()
+		drop_fruit()
 
 
 func drop_fruit():
@@ -40,7 +42,3 @@ func gen_fruit():
 	fruit.global_transform.origin = Vector2(player.position.x, player.position.y + 25)
 	fruits.append(fruit)
 	last_fruit = fruit
-
-
-func last_fruit_collided():
-	current_fruit.show()

@@ -32,7 +32,5 @@ func _physics_process(_delta):
 
 
 func _on_body_entered(body):
-	print(body)
-	if not collided and body:
-		collided = true
-		get_parent().last_fruit_collided()
+	collided = true
+	get_parent().current_fruit.show()
