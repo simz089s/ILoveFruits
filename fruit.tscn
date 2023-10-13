@@ -6,8 +6,8 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_nu8pw"]
 radius = 17.0
 
-[node name="RigidBody2D" type="RigidBody2D"]
-max_contacts_reported = 100
+[node name="Fruit" type="RigidBody2D"]
+max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("1_pcgay")
 
