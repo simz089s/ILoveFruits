@@ -1,12 +1,12 @@
 extends Node2D
 
 
-@onready var hud : Control = $HUD
-@onready var menu : Control = $Menu
-@onready var main_2d : Node2D = $Main2D
-@onready var camera : Camera2D = $Main2D/Camera
+@onready var hud: Control = $HUD
+@onready var menu: Control = $Menu
+@onready var main_2d: Node2D = $Main2D
+@onready var camera: Camera2D = $Main2D/Camera
 
-var level_instance : Node2D
+var level_instance: Node2D
 
 
 # Called when the node enters the scene tree for the first time.

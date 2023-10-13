@@ -1,16 +1,14 @@
 [gd_scene load_steps=4 format=3 uid="uid://bv6h6stwb4q7f"]
 
 [ext_resource type="PackedScene" uid="uid://bp7mvddhaqe72" path="res://Player/player.tscn" id="1_1oxy0"]
+[ext_resource type="Script" path="res://Levels/level.gd" id="1_3pp0c"]
 [ext_resource type="PackedScene" uid="uid://dcmtnovcwpi37" path="res://fruit_container.tscn" id="1_slmxp"]
-[ext_resource type="PackedScene" uid="uid://dfn68ccr4mjga" path="res://fruit.tscn" id="2_4ie6l"]
 
 [node name="Level" type="Node2D"]
+script = ExtResource("1_3pp0c")
 
 [node name="FruitContainer" parent="." instance=ExtResource("1_slmxp")]
 position = Vector2(410, 69)
 
 [node name="Player" parent="." instance=ExtResource("1_1oxy0")]
 position = Vector2(568, 62)
-
-[node name="Fruit" parent="." instance=ExtResource("2_4ie6l")]
-position = Vector2(568, 84)
