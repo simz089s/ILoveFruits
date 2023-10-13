@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bv6h6stwb4q7f"]
+[gd_scene load_steps=5 format=3 uid="uid://bv6h6stwb4q7f"]
 
 [ext_resource type="PackedScene" uid="uid://bp7mvddhaqe72" path="res://Player/player.tscn" id="1_1oxy0"]
 [ext_resource type="Script" path="res://Levels/level.gd" id="1_3pp0c"]
 [ext_resource type="PackedScene" uid="uid://dcmtnovcwpi37" path="res://fruit_container.tscn" id="1_slmxp"]
+[ext_resource type="Texture2D" uid="uid://1svn7d5pxfha" path="res://Arts/fruit.png" id="4_24etm"]
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1_3pp0c")
@@ -12,3 +13,8 @@ position = Vector2(410, 69)
 
 [node name="Player" parent="." instance=ExtResource("1_1oxy0")]
 position = Vector2(568, 62)
+
+[node name="Fruit" type="Sprite2D" parent="."]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("4_24etm")
+offset = Vector2(-25, 25)
