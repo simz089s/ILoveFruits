@@ -1,9 +1,26 @@
-[gd_scene load_steps=5 format=3 uid="uid://bv6h6stwb4q7f"]
+[gd_scene load_steps=10 format=3 uid="uid://bv6h6stwb4q7f"]
 
 [ext_resource type="PackedScene" uid="uid://bp7mvddhaqe72" path="res://Player/player.tscn" id="1_1oxy0"]
 [ext_resource type="Script" path="res://Levels/level.gd" id="1_3pp0c"]
 [ext_resource type="PackedScene" uid="uid://dcmtnovcwpi37" path="res://fruit_container.tscn" id="1_slmxp"]
 [ext_resource type="Texture2D" uid="uid://1svn7d5pxfha" path="res://Arts/fruit.png" id="4_24etm"]
+
+[sub_resource type="SystemFont" id="SystemFont_ney28"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_axhau"]
+font = SubResource("SystemFont_ney28")
+font_size = 72
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_tuogk"]
+
+[sub_resource type="SystemFont" id="SystemFont_365ec"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_qhoma"]
+font = SubResource("SystemFont_365ec")
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1_3pp0c")
@@ -18,3 +35,33 @@ position = Vector2(568, 62)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("4_24etm")
 offset = Vector2(-25, 25)
+
+[node name="Score" type="Label" parent="."]
+offset_left = 232.0
+offset_top = 68.0
+offset_right = 409.0
+offset_bottom = 167.0
+label_settings = SubResource("LabelSettings_axhau")
+horizontal_alignment = 3
+vertical_alignment = 3
+
+[node name="Panel" type="Panel" parent="."]
+offset_left = 754.0
+offset_top = 69.0
+offset_right = 794.0
+offset_bottom = 109.0
+
+[node name="NextFruit" type="TextureRect" parent="Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("PlaceholderTexture2D_tuogk")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="Panel"]
+layout_mode = 0
+offset_top = 40.0
+offset_right = 40.0
+offset_bottom = 66.0
+text = "Next"
+label_settings = SubResource("LabelSettings_qhoma")

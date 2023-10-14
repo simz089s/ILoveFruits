@@ -42,9 +42,11 @@ func _physics_process(_delta):
 
 
 func _on_body_entered(body):
+	var level := get_parent()
+	
 	if not collided_once:
 		collided_once = true
-		get_parent().fruit_collided(self)
+		level.fruit_collided(self)
 	
 	if is_instance_of(body, RigidBody2D) and self.fruit_type == body.fruit_type and self.fruit_type != FruitType.MELON:
-		get_parent().merge_fruits(self, body) # This will happen twice though...
+		level.merge_fruits(self, body) # This will happen twice though...

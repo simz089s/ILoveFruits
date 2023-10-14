@@ -3,8 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://1svn7d5pxfha" path="res://Arts/fruit.png" id="1_au6l8"]
 [ext_resource type="Script" path="res://fruit.gd" id="1_pcgay"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_nu8pw"]
-radius = 17.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_e3hsb"]
+radius = 15.0
+height = 34.0
 
 [node name="Fruit" type="RigidBody2D"]
 max_contacts_reported = 1
@@ -16,6 +17,8 @@ scale = Vector2(0.1, 0.1)
 texture = ExtResource("1_au6l8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_nu8pw")
+position = Vector2(0, 1)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_e3hsb")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

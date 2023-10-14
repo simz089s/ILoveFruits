@@ -16,13 +16,30 @@ var current_fruit: Sprite2D
 var last_fruit: RigidBody2D
 var next_fruit: RigidBody2D
 var fruits: Array
+var score: Label
+var score_counter := 0
+var next_fruit_panel: TextureRect
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	randomize()
+	score = self.get_node("Score")
+	score.text = "%d" % score_counter
 	player = self.get_node("Player")
 	current_fruit = self.get_node("Fruit")
+	next_fruit_panel = self.get_node("Panel/NextFruit")
+	next_fruit = fruit_scene.instantiate()
+	next_fruit.fruit_type = next_fruit.FruitType.values()[randi_range(0, next_fruit.FruitType.size() - 3)]
+	match next_fruit.fruit_type:
+		next_fruit.FruitType.PEACH:
+			next_fruit_panel.texture = fruit_tex_peach
+		next_fruit.FruitType.APPLE:
+			next_fruit_panel.texture = fruit_tex_apple
+		next_fruit.FruitType.MOMO:
+			next_fruit_panel.texture = fruit_tex_momo
+		next_fruit.FruitType.PINK:
+			next_fruit_panel.texture = fruit_tex_pink
 	placeholder_fruit = fruit_scene.instantiate()
 	placeholder_fruit.fruit_type = placeholder_fruit.FruitType.values()[randi_range(0, placeholder_fruit.FruitType.size() - 3)]
 	match placeholder_fruit.fruit_type:
@@ -62,7 +79,7 @@ func _input(event):
 
 func drop_fruit():
 	gen_new_fruit(placeholder_fruit.fruit_type)
-	placeholder_fruit.fruit_type = placeholder_fruit.FruitType.values()[randi_range(0, placeholder_fruit.FruitType.size() - 3)]
+	placeholder_fruit.fruit_type = next_fruit.fruit_type
 	match placeholder_fruit.fruit_type:
 		placeholder_fruit.FruitType.PEACH:
 			current_fruit.set_texture(fruit_tex_peach)
@@ -164,10 +181,22 @@ func gen_bigger_fruit_than(fruit_1, fruit_2):
 
 
 func merge_fruits(fruit_1, fruit_2):
-	# This will get called twice by each fruit on collision 🤔
+	# Only one of the two fruits should perform these
 	if fruit_1.get_instance_id() < fruit_2.get_instance_id():
+		score_counter += 1
+		score.text = "%d" % score_counter
 		gen_bigger_fruit_than(fruit_1, fruit_2)
 
 
 func fruit_collided(_fruit):
 	current_fruit.show()
+	next_fruit.fruit_type = next_fruit.FruitType.values()[randi_range(0, next_fruit.FruitType.size() - 3)]
+	match next_fruit.fruit_type:
+		next_fruit.FruitType.PEACH:
+			next_fruit_panel.texture = fruit_tex_peach
+		next_fruit.FruitType.APPLE:
+			next_fruit_panel.texture = fruit_tex_apple
+		next_fruit.FruitType.MOMO:
+			next_fruit_panel.texture = fruit_tex_momo
+		next_fruit.FruitType.PINK:
+			next_fruit_panel.texture = fruit_tex_pink
