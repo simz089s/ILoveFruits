@@ -188,7 +188,7 @@ func merge_fruits(fruit_1, fruit_2):
 		gen_bigger_fruit_than(fruit_1, fruit_2)
 
 
-func fruit_collided(_fruit):
+func fruit_collided_once(_fruit):
 	current_fruit.show()
 	next_fruit.fruit_type = next_fruit.FruitType.values()[randi_range(0, next_fruit.FruitType.size() - 3)]
 	match next_fruit.fruit_type:
@@ -200,3 +200,7 @@ func fruit_collided(_fruit):
 			next_fruit_panel.texture = fruit_tex_momo
 		next_fruit.FruitType.PINK:
 			next_fruit_panel.texture = fruit_tex_pink
+
+
+func game_over():
+	print("GAME OVER")

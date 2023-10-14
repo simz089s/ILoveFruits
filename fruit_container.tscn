@@ -1,12 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://dcmtnovcwpi37"]
+[gd_scene load_steps=4 format=3 uid="uid://dcmtnovcwpi37"]
 
+[ext_resource type="Script" path="res://fruit_container.gd" id="1_6mrgj"]
 [ext_resource type="Texture2D" uid="uid://cb2brrja4sxi6" path="res://Arts/container.png" id="1_ljt62"]
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_nkrgo"]
+b = Vector2(304, 0)
 
 [node name="FruitContainer" type="Node2D"]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 collision_layer = 3
 collision_mask = 3
+script = ExtResource("1_6mrgj")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
 polygon = PackedVector2Array(0, 0, 0, 570, 325, 570, 325, 0, 314, 0, 314, 555, 10, 555, 10, 0)
@@ -16,3 +21,21 @@ offset_right = 332.0
 offset_bottom = 386.0
 scale = Vector2(1, 1.5)
 texture = ExtResource("1_ljt62")
+
+[node name="Area2D" type="Area2D" parent="StaticBody2D"]
+position = Vector2(10, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D/Area2D"]
+shape = SubResource("SegmentShape2D_nkrgo")
+
+[node name="ColorRect" type="ColorRect" parent="StaticBody2D/Area2D"]
+offset_top = -2.0
+offset_right = 304.0
+offset_bottom = 2.0
+color = Color(1, 0.498039, 0, 1)
+
+[node name="Timer" type="Timer" parent="StaticBody2D/Area2D"]
+
+[connection signal="body_entered" from="StaticBody2D/Area2D" to="StaticBody2D" method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="StaticBody2D/Area2D" to="StaticBody2D" method="_on_area_2d_body_exited"]
+[connection signal="timeout" from="StaticBody2D/Area2D/Timer" to="StaticBody2D" method="_on_timer_timeout"]

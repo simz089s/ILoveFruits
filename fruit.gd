@@ -13,6 +13,8 @@ enum FruitType {
 	MELON,
 }
 
+var level: Node2D
+
 var collided_once := false
 var fruit_type: FruitType
 
@@ -22,7 +24,7 @@ var fruit_type: FruitType
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	level = get_parent()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -42,11 +44,9 @@ func _physics_process(_delta):
 
 
 func _on_body_entered(body):
-	var level := get_parent()
-	
 	if not collided_once:
 		collided_once = true
-		level.fruit_collided(self)
+		level.fruit_collided_once(self)
 	
 	if is_instance_of(body, RigidBody2D) and self.fruit_type == body.fruit_type and self.fruit_type != FruitType.MELON:
 		level.merge_fruits(self, body) # This will happen twice though...
