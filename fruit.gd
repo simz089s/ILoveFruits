@@ -7,6 +7,9 @@ extends RigidBody2D
 enum FruitType {
 	PEACH,
 	APPLE,
+	MOMO,
+	PINK,
+	YELLOW,
 	MELON,
 }
 
