@@ -1,39 +1,26 @@
-extends StaticBody2D
+class_name FruitContainer
+extends Node2D
 
 signal game_over_reached
 
-var timer: Timer
-var line: ColorRect
-var touching := false
-var faded := false
-var _visible := false
-var time := 0
-var sin_time := 0.
+@onready var limit_line: ColorRect = $LimitLine
+@onready var overflow_timer: Timer = $OverflowTimer
 
-func _ready():
-	timer = self.get_node("Area2D/Timer")
-	line = self.get_node("Area2D/ColorRect")
 
-func _on_area_2d_body_entered(_body):
-	touching = true
-	faded = true
-	timer.start(3)
+func check_height(fruits: Node2D) -> void:
+	var limit_y := limit_line.global_position.y + limit_line.size.y / 2.0
+	for child in fruits.get_children():
+		var fruit := child as Fruit
+		if not fruit.has_landed or fruit.merge_pending:
+			continue
+		var fruit_top := fruit.global_position.y - fruit.circle.radius
+		if fruit_top <= limit_y:
+			if overflow_timer.is_stopped():
+				overflow_timer.start()
+			return
 
-func _on_area_2d_body_exited(_body):
-	touching = false
-	timer.stop()
+	overflow_timer.stop()
 
-func _on_timer_timeout():
-	touching = false
+
+func _on_overflow_timer_timeout() -> void:
 	game_over_reached.emit()
-
-func flash():
-	if not faded:
-		if sin_time > 0:
-			_visible = true
-		else:
-			_visible = false
-	else:
-		_visible = true
-		line.self_modulate.a = sin_time
-	visible = _visible

@@ -7,12 +7,6 @@
 [node name="Main" type="Node2D"]
 script = ExtResource("1_ht6oi")
 
-[node name="HUD" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
 [node name="Menu" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
@@ -38,10 +32,6 @@ offset_bottom = 383.0
 tooltip_text = "Quit the game."
 text = "Quit"
 icon = SubResource("PlaceholderTexture2D_t4xo1")
-
-[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
-
-[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
 
 [node name="Main2D" type="Node2D" parent="."]
 

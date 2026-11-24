@@ -1,16 +1,23 @@
+class_name DropPlayer
 extends CharacterBody2D
 
+const SPEED := 200.0
 
-const SPEED = 200.0
+var left_edge := -INF
+var right_edge := INF
 
 
-func _physics_process(_delta):
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction = Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-
+func _physics_process(_delta: float) -> void:
+	velocity.x = Input.get_axis("move_left", "move_right") * SPEED
 	move_and_slide()
+	clamp_to_box()
+
+
+func set_drop_bounds(left: float, right: float) -> void:
+	left_edge = left
+	right_edge = right
+	clamp_to_box()
+
+
+func clamp_to_box() -> void:
+	global_position.x = clampf(global_position.x, left_edge, right_edge)

@@ -1,132 +1,121 @@
 extends Node2D
 
-var fruit_scene := preload("res://fruit.tscn")
-
-# Store your custom textures directly in the dictionary
-var FRUIT_DATA = {
-	0: {"tex": preload("res://Arts/peach.png"), "sprite_scale": 0.10, "phys_scale": 1.0, "mass": 1.0}, # PEACH
-	1: {"tex": preload("res://Arts/apple.png"), "sprite_scale": 0.15, "phys_scale": 1.5, "mass": 1.5}, # APPLE
-	2: {"tex": preload("res://Arts/momo.png"), "sprite_scale": 0.20, "phys_scale": 2.0, "mass": 2.0},  # MOMO
-	3: {"tex": preload("res://Arts/pink.png"), "sprite_scale": 0.25, "phys_scale": 2.5, "mass": 2.5},  # PINK
-	4: {"tex": preload("res://Arts/yellow.png"), "sprite_scale": 0.30, "phys_scale": 3.0, "mass": 3.0},# YELLOW
-	5: {"tex": preload("res://Arts/watermelon.png"), "sprite_scale": 0.35, "phys_scale": 3.5, "mass": 3.5} # MELON
+const FRUIT_SCENE := preload("res://fruit.tscn")
+const FRUIT_DATA := {
+	Fruit.FruitType.PEACH: {"texture": preload("res://Arts/peach.png"), "scale": 0.10, "radius": 16.0, "mass": 1.0},
+	Fruit.FruitType.APPLE: {"texture": preload("res://Arts/apple.png"), "scale": 0.15, "radius": 24.0, "mass": 1.5},
+	Fruit.FruitType.MOMO: {"texture": preload("res://Arts/momo.png"), "scale": 0.20, "radius": 32.0, "mass": 2.0},
+	Fruit.FruitType.PINK: {"texture": preload("res://Arts/pink.png"), "scale": 0.25, "radius": 40.0, "mass": 2.5},
+	Fruit.FruitType.YELLOW: {"texture": preload("res://Arts/yellow.png"), "scale": 0.30, "radius": 48.0, "mass": 3.0},
+	Fruit.FruitType.MELON: {"texture": preload("res://Arts/watermelon.png"), "scale": 0.35, "radius": 56.0, "mass": 3.5},
 }
 
-var placeholder_fruit: RigidBody2D
-var player: CharacterBody2D
-var current_fruit: Sprite2D
-var last_fruit: RigidBody2D
-var next_fruit: RigidBody2D
-var fruits: Array
-var score: Label
-var score_counter := 0
-var next_fruit_panel: TextureRect
+var current_type: Fruit.FruitType
+var next_type: Fruit.FruitType
+var can_drop := true
+var score := 0
 
-func _ready():
-	randomize()
-	$FruitContainer/StaticBody2D.game_over_reached.connect(game_over)
-	
-	score = self.get_node("Score")
-	score.text = "%d" % score_counter
-	player = self.get_node("Player")
-	current_fruit = self.get_node("Fruit")
-	next_fruit_panel = self.get_node("Panel/NextFruit")
-	
-	next_fruit = fruit_scene.instantiate()
-	placeholder_fruit = fruit_scene.instantiate()
-	
-	# Roll the initial fruits
-	roll_next_fruit()
-	
-	placeholder_fruit.fruit_type = randi_range(0, 3)
-	apply_fruit_visuals(current_fruit, placeholder_fruit.fruit_type)
-	
-	placeholder_fruit.collided_once = true
-	last_fruit = placeholder_fruit
+@onready var player: DropPlayer = $Player
+@onready var preview: Sprite2D = $Player/FruitPreview
+@onready var next_preview: TextureRect = $Panel/NextFruit
+@onready var score_label: Label = $Score
+@onready var container: FruitContainer = $FruitContainer
+@onready var fruits: Node2D = $Fruits
 
-func _process(_delta):
-	current_fruit.position = Vector2(player.position.x, player.position.y + 25)
 
-func _input(event):
-	if event.is_action_released("release_fruit") and last_fruit.collided_once:
-		current_fruit.hide()
+func _ready() -> void:
+	container.game_over_reached.connect(game_over)
+	score_label.text = str(score)
+	current_type = roll_fruit_type()
+	next_type = roll_fruit_type()
+	update_previews()
+
+
+func _physics_process(_delta: float) -> void:
+	container.check_height(fruits)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if can_drop and event.is_action_released("release_fruit"):
 		drop_fruit()
 
-func drop_fruit():
-	gen_new_fruit(placeholder_fruit.fruit_type)
-	placeholder_fruit.fruit_type = next_fruit.fruit_type
-	apply_fruit_visuals(current_fruit, placeholder_fruit.fruit_type)
 
-func gen_new_fruit(fruit_type):
-	var fruit := fruit_scene.instantiate()
-	fruit.fruit_type = fruit_type
-	
-	var data = FRUIT_DATA[fruit_type]
-	var sprite = fruit.get_node("Sprite2D")
-	var collision = fruit.get_node("CollisionShape2D")
-	
-	# Apply visuals and physics from dictionary
-	sprite.texture = data.tex
-	sprite.scale = Vector2(data.sprite_scale, data.sprite_scale)
-	collision.scale = Vector2(data.phys_scale, data.phys_scale)
+func drop_fruit() -> void:
+	can_drop = false
+	var fruit := create_fruit(current_type, preview.global_position)
+	fruit.first_contact.connect(unlock_drop, CONNECT_ONE_SHOT)
+
+	current_type = next_type
+	next_type = roll_fruit_type()
+	preview.hide()
+
+
+func unlock_drop() -> void:
+	update_previews()
+	preview.show()
+	can_drop = true
+
+
+func create_fruit(type: Fruit.FruitType, spawn_position: Vector2) -> Fruit:
+	var fruit := FRUIT_SCENE.instantiate() as Fruit
+	var data: Dictionary = FRUIT_DATA[type]
+	var sprite: Sprite2D = fruit.get_node("Sprite2D")
+	var collision: CollisionShape2D = fruit.get_node("CollisionShape2D")
+	var shape := CircleShape2D.new()
+	shape.radius = data.radius
+	collision.shape = shape
+	sprite.texture = data.texture
+	sprite.scale = Vector2.ONE * data.scale
 	fruit.mass = data.mass
-			
-	fruit.collided_for_first_time.connect(fruit_collided_once)
-	fruit.request_merge.connect(merge_fruits)
-	
-	add_child(fruit)
-	fruit.global_position = Vector2(player.position.x, player.position.y + 25)
-	fruits.append(fruit)
-	last_fruit = fruit
+	fruit.fruit_type = type
+	fruit.position = fruits.to_local(spawn_position)
+	fruit.merge_requested.connect(request_merge)
+	fruits.add_child(fruit)
+	return fruit
 
-func gen_bigger_fruit_than(fruit_1, fruit_2):
-	var new_fruit := fruit_scene.instantiate()
-	
-	# Upgrade the fruit type by adding 1
-	var next_type_int = fruit_1.fruit_type + 1
-	new_fruit.fruit_type = next_type_int
-	
-	var data = FRUIT_DATA[next_type_int]
-	var sprite = new_fruit.get_node("Sprite2D")
-	var collision = new_fruit.get_node("CollisionShape2D")
-	
-	# Apply visuals and physics from dictionary
-	sprite.texture = data.tex
-	sprite.scale = Vector2(data.sprite_scale, data.sprite_scale)
-	collision.scale = Vector2(data.phys_scale, data.phys_scale)
-	new_fruit.mass = data.mass
-			
-	new_fruit.global_position = fruit_1.position.lerp(fruit_2.position, 0.5)
-	
-	new_fruit.collided_for_first_time.connect(fruit_collided_once)
-	new_fruit.request_merge.connect(merge_fruits)
-	
-	fruits.append(new_fruit)
-	last_fruit = placeholder_fruit
-	
-	fruit_1.queue_free()
-	fruit_2.queue_free()
-	self.call_deferred("add_child", new_fruit)
 
-func merge_fruits(fruit_1, fruit_2):
-	score_counter += 1
-	score.text = "%d" % score_counter
-	gen_bigger_fruit_than(fruit_1, fruit_2)
+func request_merge(first: Fruit, second: Fruit) -> void:
+	if first.merge_pending or second.merge_pending:
+		return
 
-func fruit_collided_once(_fruit):
-	current_fruit.show()
-	roll_next_fruit()
+	# Reserve both fruits now. Change the physics bodies after contact callbacks finish.
+	first.merge_pending = true
+	second.merge_pending = true
+	finish_merge.call_deferred(first, second)
 
-# --- Helper Functions ---
 
-func roll_next_fruit():
-	# Randomize next fruit between PEACH (0) and PINK (3)
-	next_fruit.fruit_type = randi_range(0, 3) 
-	next_fruit_panel.texture = FRUIT_DATA[next_fruit.fruit_type].tex
+func finish_merge(first: Fruit, second: Fruit) -> void:
+	if not can_process():
+		return
 
-func apply_fruit_visuals(sprite_node: Sprite2D, f_type: int):
-	sprite_node.texture = FRUIT_DATA[f_type].tex
-	sprite_node.scale = Vector2(FRUIT_DATA[f_type].sprite_scale, FRUIT_DATA[f_type].sprite_scale)
+	var bigger_type := (first.fruit_type + 1) as Fruit.FruitType
+	var midpoint := first.global_position.lerp(second.global_position, 0.5)
+	first.queue_free()
+	second.queue_free()
+	var bigger := create_fruit(bigger_type, midpoint)
+	bigger.has_landed = true
+	score += 1
+	score_label.text = str(score)
 
-func game_over():
-	print("GAME OVER")
+
+func roll_fruit_type() -> Fruit.FruitType:
+	return randi_range(Fruit.FruitType.PEACH, Fruit.FruitType.PINK) as Fruit.FruitType
+
+
+func update_previews() -> void:
+	var data: Dictionary = FRUIT_DATA[current_type]
+	preview.texture = data.texture
+	preview.scale = Vector2.ONE * data.scale
+	next_preview.texture = FRUIT_DATA[next_type].texture
+
+	# The ends of the limit line mark the inside edges of the box.
+	var radius: float = data.radius
+	var line := container.limit_line
+	player.set_drop_bounds(line.global_position.x + radius,
+		line.global_position.x + line.size.x - radius)
+
+
+func game_over() -> void:
+	preview.hide()
+	$GameOver.show()
+	process_mode = Node.PROCESS_MODE_DISABLED
